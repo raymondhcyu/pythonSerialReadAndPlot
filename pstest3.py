@@ -21,7 +21,7 @@ import numpy as np
 #
 # simplePlot()
 
-string = 'Bat_1: 639 Bat_2: 739 AoA: 63 Sideslip: 73'
+string = 'Bat_1: 639 Bat_2: 739 AoA: 63 Sideslip: 73 SAMPLE WARNING'
 print("Original string: " + string, type(string))
 
 stringSplit = string.split(' ')
