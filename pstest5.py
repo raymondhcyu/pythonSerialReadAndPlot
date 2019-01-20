@@ -1,5 +1,5 @@
 # Single plot, originally from beta other purposes
-# Severe and growing latency needs fix
+# Severe and growing latency needs fix. Move exceptions inside parseData?
 
 import sys
 import serial

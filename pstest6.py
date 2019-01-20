@@ -1,5 +1,6 @@
 # Single plot, originally for Arduino
 # Kinda works, occasionally plot stops completely with index error. 2s latency
+# Move exceptions inside parseData? serial.readline outside of try/except seems to reduce latency
 
 import serial
 import matplotlib.pyplot as plt
