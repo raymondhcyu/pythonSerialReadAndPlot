@@ -43,21 +43,21 @@ class AnalogPlot:
 # main() function
 def main():
   # expects 1 arg - serial port string
-  # if(len(sys.argv) != 2):
-  #   print('Example usage: python showdata.py "/dev/tty.usbmodem411"')
-  #   exit(1)
-  #
-  # # strPort = '/dev/ttyUSB13'
-  # strPort = sys.argv[1];
+  if(len(sys.argv) != 2):
+    print('Example usage: python showdata.py "/dev/tty.usbmodem411"')
+    exit(1)
+
+  # strPort = '/dev/ttyUSB13'
+  strPort = sys.argv[1];
 
   # plot parameters
   analogData = AnalogData(100)
   analogPlot = AnalogPlot(analogData)
 
-  print('plotting data...')
+  print('Plotting data...')
 
   # open serial port
-  ser = serial.Serial('COM14', 57600)
+  ser = serial.Serial(strPort, 57600)
 
   # print(ser)
 
