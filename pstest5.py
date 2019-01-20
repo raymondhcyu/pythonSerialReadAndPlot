@@ -1,17 +1,5 @@
-# INFO
-# Plot received data from serial port
-# User input COM and baud rate with exceptions if error
-#
-# QUICK START
-# 1) Flash microcontroller board with operational code
-# 2) Press and hold reset button microcontroller board to begin transmittion
-# 3) Transmitter: check for flashing red light on radio telemetry air module to confirm data being sent
-# 4) Receiver: check for solid green light on radio telemetry ground module to confirm pair with transmitter
-# 5) Operator: smile when you receive data
-#
-# Raymond Yu
-# Plotter created with assistance
-# 20 January 2019
+# Single plot, originally from beta other purposes
+# Severe and growing latency needs fix
 
 import sys
 import serial
