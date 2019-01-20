@@ -26,6 +26,10 @@ def getUserInput():
         sys.exit(1) # exit program
     return targetSerialPort, baudRate
 
+def parseData(bat1, bat2, aoa, ss):
+
+    return bat1, bat2, aoa, ss
+
 targetSerialPort, baudRate = getUserInput()
 
 try:
@@ -37,7 +41,9 @@ except serial.serialutil.SerialException: # serial port inaccessible error
 while True:
     try:
         data = serialPort.readline()
-        print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
+
+        # print(data) # start, stop, carriage return, and quotes still attached
+        # print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
     except UnicodeDecodeError: # check if data can be decoded
         print("Unable to decode. Check baud rate.")
         break
