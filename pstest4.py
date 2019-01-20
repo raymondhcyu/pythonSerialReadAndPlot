@@ -56,7 +56,7 @@ def parseData(inputData):
 targetSerialPort, baudRate = getUserInput()
 
 try:
-    serialPort = serial.Serial(targetSerialPort, baudRate, timeout = 1)
+    serialPort = serial.Serial(targetSerialPort, baudRate, timeout = 1) # more options like parity bits and flow control available too
 except serial.serialutil.SerialException: # serial port inaccessible error
     print("Serial port cannot be found. Check COM port or if it is open in another program.")
     sys.exit(1) # exit program
