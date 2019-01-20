@@ -23,7 +23,7 @@ def getUserInput():
     # Check if a correct baud rate entered
     if baudRate not in baudRateList:
         print("Error: Incorrect baud rate entered.")
-        sys.exit(1)
+        sys.exit(1) # exit program
     return targetSerialPort, baudRate
 
 targetSerialPort, baudRate = getUserInput()
@@ -32,18 +32,19 @@ try:
     serialPort = serial.Serial(targetSerialPort, baudRate, timeout = 1)
 except serial.serialutil.SerialException: # serial port inaccessible error
     print("Serial port cannot be found. Check COM port or if it is open in another program.")
-    sys.exit(1) # exit system
+    sys.exit(1) # exit program
 
 while True:
     try:
         data = serialPort.readline()
-        print(str(data,'utf-8').strip('\r\n'))
-    except UnicodeDecodeError:
-        print("Unable to decode. Check correct baud rate.")
+        print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
+    except UnicodeDecodeError: # check if data can be decoded
+        print("Unable to decode. Check baud rate.")
         break
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: # means to stop program
         print("Program stopped.")
         break
 
+# Clean and close serial port for future use
 serialPort.flush()
 serialPort.close()
