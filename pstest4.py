@@ -1,7 +1,14 @@
+# INFO
 # Read and receive data from serial port and print to console_output
 # Print serial only; for plotting see other file
-#
 # User input COM and baud rate with exceptions if error
+#
+# QUICK START
+# 1) Flash microcontroller board with operational code
+# 2) Press and hold reset button microcontroller board to begin transmittion
+# 3) Transmitter: check for flashing red light on radio telemetry air module to confirm data being sent
+# 4) Receiver: check for solid green light on radio telemetry ground module to confirm pair with transmitter
+# 5) Operator: smile when you receive data
 #
 # Raymond Yu
 # 19 January 2019
@@ -58,7 +65,7 @@ while True:
     try:
         data = serialPort.readline()
         Bat_1, Bat_2, AoA, Sideslip, Warning1, Warning2, Warning3 = parseData(str(data,'utf-8').strip('\r\n'))
-        
+
         print("Bat_1: " + Bat_1 + "V" \
             + "\t" + "Bat_2: " + Bat_2 + "V" \
             + "\t" + "AoA: " + AoA + "degs" \
