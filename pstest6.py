@@ -76,14 +76,11 @@ while True:
                 values.append(valueInInt)
                 values.pop(0)
                 drawnow(plotValues)
-            else:
-                print("Invalid! negative number")
-        else:
-            print("Invalid! too large")
     except ValueError:
-        print("Invalid! cannot cast")
+        print("Error: Cannot cast.")
         pass
     except IndexError:
+        print("Error: Out of index.")
         pass
     except UnicodeDecodeError: # check if data can be decoded
         print("Unable to decode. Check baud rate.")
@@ -92,5 +89,6 @@ while True:
         print("Program stopped.")
         break
 
+# Clean and close serial port for future use
 serialPort.flush()
 serialPort.close()
