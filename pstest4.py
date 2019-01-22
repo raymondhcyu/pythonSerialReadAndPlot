@@ -71,7 +71,7 @@ except serial.serialutil.SerialException: # serial port inaccessible error
 while True:
     try:
         data = serialPort.readline()
-        # os.system("cls")
+        os.system("cls")
         print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
         # Bat_1, Bat_2, AoA, Sideslip, Warning1, Warning2, Warning3 = parseData(str(data,'utf-8').strip('\r\n'))
         #

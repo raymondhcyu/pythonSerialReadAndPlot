@@ -1,7 +1,12 @@
 # INFO
 # Read and receive data from serial port and print to console_output
+# Input data format: "float float float float float float float float float" space deliminated
 # Print serial only; for plotting see other file
-# User input COM and baud rate with exceptions if error
+#
+# USER INPUTS
+# - COM port
+# - Baud baud
+# - ctrl+c to stop program
 #
 # QUICK START
 # 1) Flash microcontroller board with operational code
@@ -11,17 +16,18 @@
 # 5) Operator: smile when you receive data
 #
 # Raymond Yu
-# 19 January 2019
+# 22 January 2019
 
 import os
 import sys
 import serial
 import time
+import numpy as np
 
 baudRateList = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000]
 
 def getUserInput():
-    print("*** Read serial data from COM port ***")
+    print("*** Read serial data from COM port: SG Calibration ***")
     targetSerialPort = input("Enter COM port (e.g. COM14): ")
     baudRate = int(input("Enter baud rate: ")) # convert input string to integer
 
@@ -34,25 +40,18 @@ def getUserInput():
         sys.exit(1) # exit program
     return targetSerialPort, baudRate
 
-# def parseData(inputData):
-#     warning1, warning2, warning3 = (' ', ' ', ' ')
-#     stringSplit = inputData.split(' ') # split input data by char
-#
-#     bat1 = stringSplit[1] # assign depending on location
-#     bat2 = stringSplit[3]
-#     aoa = stringSplit[5]
-#     ss = stringSplit[7]
-#
-#     try:
-#         if (int(bat1) < 500) or (int(bat2) < 500):
-#             warning1 = 'BATT WARNING'
-#         if int(aoa) > 100:
-#             warning2 = 'AOA WARNING'
-#         if int(ss) > 120:
-#             warning3 = 'SIDESLIP WARNING'
-#     except ValueError:
-#         pass
-#     return bat1, bat2, aoa, ss, warning1, warning2, warning3
+def parseData(inputData):
+    try:
+        stringSplit = inputData.split(' ') # split input data by char
+        time = stringSplit[0] # first float is time, synced to transmitter
+        sg = np.zeros(8)
+        for i in range(len(sg)):
+            sg[i] = stringSplit[(i + 1)]
+    except IndexError: # if data corruption pass error
+        pass
+    except ValueError: # if data corruption pass error
+        pass
+    return time, sg
 
 targetSerialPort, baudRate = getUserInput()
 
@@ -66,24 +65,27 @@ try:
         rtscts = False)
 except serial.serialutil.SerialException: # serial port inaccessible error
     print("Serial port cannot be found. Check COM port or if it is open in another program.")
-    sys.exit(1) # exit program
+    sys.exit(1)
 
 while True:
     try:
-        data = serialPort.readline()
-        # os.system("cls")
-        print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
-        # Bat_1, Bat_2, AoA, Sideslip, Warning1, Warning2, Warning3 = parseData(str(data,'utf-8').strip('\r\n'))
-        #
-        # print("Bat_1: " + Bat_1 + "V" \
-        #     + "\t" + "Bat_2: " + Bat_2 + "V" \
-        #     + "\t" + "AoA: " + AoA + "degs" \
-        #     + "\t" + "Sideslip: " + Sideslip + "degs"
-        #     + "\t" + Warning1 + "\t" + Warning2 + "\t" + Warning3)
+        data = serialPort.readline() # read from serial port
+        os.system("cls") # clear previous lines
+        # print(str(data,'utf-8').strip('\r\n')) # Testpoint: read data and remove carriage returns and newlines
+        Time, SG = parseData(str(data,'utf-8').strip('\r\n'))
+        SG = [str(i) for i in SG]
 
-        # change individual bats to data array
+        print("Uptime: " + Time \
+            + "\t" + "SG1: " + SG[0] \
+            + "\t" + "SG2: " + SG[1] \
+            + "\t" + "SG3: " + SG[2] \
+            + "\t" + "SG4: " + SG[3] \
+            + "\t" + "SG5: " + SG[4] \
+            + "\t" + "SG6: " + SG[5] \
+            + "\t" + "SG7: " + SG[6] \
+            + "\t" + "SG8: " + SG[7] \
+        )
         # add future functionality to detect if no data being received
-        # print(data) # start, stop, carriage return, and quotes still attached
     except IndexError:
         pass
     except UnicodeDecodeError: # check if data can be decoded
