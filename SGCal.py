@@ -23,6 +23,7 @@ import sys
 import serial
 import time
 import numpy as np
+import datetime
 
 baudRateList = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000]
 
@@ -67,6 +68,12 @@ except serial.serialutil.SerialException: # serial port inaccessible error
     print("Serial port cannot be found. Check COM port or if it is open in another program.")
     sys.exit(1)
 
+# Prepare text file to write data to, e.g. 2019_01_22_23_17_59.txt
+currentDT = datetime.datetime.now()
+file = open(currentDT.strftime("%Y_%m_%d_%H_%M_%S") + ".txt", "w")
+file.write("Time" + "\t" + "SG1" + "\t" + "SG2" + "\t" + "SG3" + "\t" + "SG4" \
+    + "\t" + "SG5" + "\t" + "SG6" + "\t" + "SG7" + "\t" + "SG8")
+
 while True:
     try:
         data = serialPort.readline() # read from serial port
@@ -83,8 +90,11 @@ while True:
             + "\t" + "SG5: " + SG[4] \
             + "\t" + "SG6: " + SG[5] \
             + "\t" + "SG7: " + SG[6] \
-            + "\t" + "SG8: " + SG[7] \
-        )
+            + "\t" + "SG8: " + SG[7])
+
+        # Write to text file
+        file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
+            + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\n")
         # add future functionality to detect if no data being received
     except IndexError:
         pass
@@ -95,6 +105,7 @@ while True:
         print("Program stopped.")
         break
 
+file.close()
 # Clean and close serial port for future use
 serialPort.flush()
 serialPort.close()
