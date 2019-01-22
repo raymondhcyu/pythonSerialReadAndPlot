@@ -21,11 +21,11 @@ import numpy as np
 #
 # simplePlot()
 
-print(np.zeros(100))
-print(len(np.zeros(100)))
+# print(np.zeros(100))
+# print(len(np.zeros(100)))
 
 
-# string = 'Bat_1: 639 Bat_2: 739 AoA: 63 Sideslip: 73 SAMPLE WARNING'
+# string = 'Bat_1: 639 Bat_2: 739 AoA: 63 Sideslip: 73 \nSG1: 904 SG2: 1004 SG3: 1104 SG4: 1204 SG5: 904 SG6: 1004 SG7: 1104 SG8: 1204'
 # print("Original string: " + string, type(string))
 #
 # stringSplit = string.split(' ')
@@ -35,7 +35,28 @@ print(len(np.zeros(100)))
 # AoA = stringSplit[5]
 # Sideslip = stringSplit[7]
 #
+# SG = np.zeros(8)
+#
+# for i in range(len(SG)):
+#     SG[i] = stringSplit[(i + 9 + (i % 2) * 2)]
+#
+# SG[0] = stringSplit[9]
+# SG[1] = stringSplit[11]
+# SG[2] = stringSplit[13]
+# SG[3] = stringSplit[15]
+# SG[4] = stringSplit[17]
+# SG[5] = stringSplit[19]
+# SG[6] = stringSplit[21]
+# SG[7] = stringSplit[23]
+#
 # print("Bat_1: " + Bat_1 + "V")
 # print("Bat_2: " + Bat_2 + "V")
 # print("AoA: " + AoA + "degs")
 # print("Sideslip: " + Sideslip + "degs")
+#
+# # Change to for loop
+# for i in range(len(SG)):
+#     print("SG" + str(i) + ": " + str(SG[i]) + "V")
+
+for i in range(8):
+    print(i, i + 9 + (i % 2))

@@ -34,25 +34,25 @@ def getUserInput():
         sys.exit(1) # exit program
     return targetSerialPort, baudRate
 
-def parseData(inputData):
-    warning1, warning2, warning3 = (' ', ' ', ' ')
-    stringSplit = inputData.split(' ') # split input data by char
-
-    bat1 = stringSplit[1] # assign depending on location
-    bat2 = stringSplit[3]
-    aoa = stringSplit[5]
-    ss = stringSplit[7]
-
-    try:
-        if (int(bat1) < 500) or (int(bat2) < 500):
-            warning1 = 'BATT WARNING'
-        if int(aoa) > 100:
-            warning2 = 'AOA WARNING'
-        if int(ss) > 120:
-            warning3 = 'SIDESLIP WARNING'
-    except ValueError:
-        pass
-    return bat1, bat2, aoa, ss, warning1, warning2, warning3
+# def parseData(inputData):
+#     warning1, warning2, warning3 = (' ', ' ', ' ')
+#     stringSplit = inputData.split(' ') # split input data by char
+#
+#     bat1 = stringSplit[1] # assign depending on location
+#     bat2 = stringSplit[3]
+#     aoa = stringSplit[5]
+#     ss = stringSplit[7]
+#
+#     try:
+#         if (int(bat1) < 500) or (int(bat2) < 500):
+#             warning1 = 'BATT WARNING'
+#         if int(aoa) > 100:
+#             warning2 = 'AOA WARNING'
+#         if int(ss) > 120:
+#             warning3 = 'SIDESLIP WARNING'
+#     except ValueError:
+#         pass
+#     return bat1, bat2, aoa, ss, warning1, warning2, warning3
 
 targetSerialPort, baudRate = getUserInput()
 
@@ -71,19 +71,19 @@ except serial.serialutil.SerialException: # serial port inaccessible error
 while True:
     try:
         data = serialPort.readline()
-        Bat_1, Bat_2, AoA, Sideslip, Warning1, Warning2, Warning3 = parseData(str(data,'utf-8').strip('\r\n'))
-
-        os.system("cls")
-        print("Bat_1: " + Bat_1 + "V" \
-            + "\t" + "Bat_2: " + Bat_2 + "V" \
-            + "\t" + "AoA: " + AoA + "degs" \
-            + "\t" + "Sideslip: " + Sideslip + "degs"
-            + "\t" + Warning1 + "\t" + Warning2 + "\t" + Warning3)
+        # os.system("cls")
+        print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
+        # Bat_1, Bat_2, AoA, Sideslip, Warning1, Warning2, Warning3 = parseData(str(data,'utf-8').strip('\r\n'))
+        #
+        # print("Bat_1: " + Bat_1 + "V" \
+        #     + "\t" + "Bat_2: " + Bat_2 + "V" \
+        #     + "\t" + "AoA: " + AoA + "degs" \
+        #     + "\t" + "Sideslip: " + Sideslip + "degs"
+        #     + "\t" + Warning1 + "\t" + Warning2 + "\t" + Warning3)
 
         # change individual bats to data array
         # add future functionality to detect if no data being received
         # print(data) # start, stop, carriage return, and quotes still attached
-        # print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
     except IndexError:
         pass
     except UnicodeDecodeError: # check if data can be decoded
