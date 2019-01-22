@@ -13,6 +13,7 @@
 # Raymond Yu
 # 19 January 2019
 
+import os
 import sys
 import serial
 import time
@@ -72,12 +73,15 @@ while True:
         data = serialPort.readline()
         Bat_1, Bat_2, AoA, Sideslip, Warning1, Warning2, Warning3 = parseData(str(data,'utf-8').strip('\r\n'))
 
+        os.system("cls")
         print("Bat_1: " + Bat_1 + "V" \
             + "\t" + "Bat_2: " + Bat_2 + "V" \
             + "\t" + "AoA: " + AoA + "degs" \
             + "\t" + "Sideslip: " + Sideslip + "degs"
             + "\t" + Warning1 + "\t" + Warning2 + "\t" + Warning3)
 
+        # change individual bats to data array
+        # add future functionality to detect if no data being received
         # print(data) # start, stop, carriage return, and quotes still attached
         # print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
     except IndexError:
