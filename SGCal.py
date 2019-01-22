@@ -1,7 +1,7 @@
 # INFO
 # Read and receive data from serial port and print to console_output
 # Input data format: "float float float float float float float float float" space deliminated
-# Print serial only; for plotting see other file
+# Print serial and then to text file; for plotting see other file
 #
 # USER INPUTS
 # - COM port
@@ -14,6 +14,7 @@
 # 3) Transmitter: check for flashing red light on radio telemetry air module to confirm data being sent
 # 4) Receiver: check for solid green light on radio telemetry ground module to confirm pair with transmitter
 # 5) Operator: smile when you receive data
+# 6) Review data written to text file
 #
 # Raymond Yu
 # 22 January 2019
