@@ -1,6 +1,6 @@
 # INFO
 # Read and receive data from serial port and print to console_output
-# Input data format: "float float float float float float float float float" space deliminated
+# Input data format: "float" 17 times, space deliminated
 # Print serial and then to text file; for plotting see other file
 #
 # USER INPUTS
@@ -17,7 +17,7 @@
 # 6) Review data written to text file
 #
 # Raymond Yu
-# 22 January 2019
+# 23 January 2019
 
 import os
 import sys
@@ -49,11 +49,14 @@ def parseData(inputData):
         sg = np.zeros(8)
         for i in range(len(sg)):
             sg[i] = stringSplit[(i + 1)]
+        bm = np.zeros(8)
+        for i in range(len(sg)):
+            bm[i] = stringSplit[(i + 9)]
     except IndexError: # if data corruption pass error
         pass
     except ValueError: # if data corruption pass error
         pass
-    return time, sg
+    return time, sg, bm
 
 targetSerialPort, baudRate = getUserInput()
 
@@ -71,31 +74,44 @@ except serial.serialutil.SerialException: # serial port inaccessible error
 
 # Prepare text file to write data to, e.g. 2019_01_22_23_17_59.txt
 currentDT = datetime.datetime.now()
-file = open("SGCal_" + currentDT.strftime("%Y_%m_%d_%H_%M_%S") + ".txt", "w")
+file = open("SGBM_" + currentDT.strftime("%Y_%m_%d_%H_%M_%S") + ".txt", "w")
 file.write("Time" + "\t" + "SG1" + "\t" + "SG2" + "\t" + "SG3" + "\t" + "SG4" \
-    + "\t" + "SG5" + "\t" + "SG6" + "\t" + "SG7" + "\t" + "SG8")
+    + "\t" + "SG5" + "\t" + "SG6" + "\t" + "SG7" + "\t" + "SG8" \
+    + "\t" + "BM1" + "\t" + "BM2" + "\t" + "BM3" + "\t" + "BM4" \
+    + "\t" + "BM5" + "\t" + "BM6" + "\t" + "BM7" + "\t" + "BM8")
 
 while True:
     try:
         data = serialPort.readline() # read from serial port
         os.system("cls") # clear previous lines
         # print(str(data,'utf-8').strip('\r\n')) # Testpoint: read data and remove carriage returns and newlines
-        Time, SG = parseData(str(data,'utf-8').strip('\r\n'))
+        Time, SG, BM = parseData(str(data,'utf-8').strip('\r\n'))
         SG = [str(i) for i in SG]
+        BM = [str(i) for i in BM]
 
         print("Uptime: " + Time \
-            + "\t" + "SG1: " + SG[0] \
+            + "\n" + "SG1: " + SG[0] \
             + "\t" + "SG2: " + SG[1] \
             + "\t" + "SG3: " + SG[2] \
             + "\t" + "SG4: " + SG[3] \
             + "\t" + "SG5: " + SG[4] \
             + "\t" + "SG6: " + SG[5] \
             + "\t" + "SG7: " + SG[6] \
-            + "\t" + "SG8: " + SG[7])
+            + "\t" + "SG8: " + SG[7] \
+            + "\n" + "SG1: " + BM[0] \
+            + "\t" + "SG2: " + BM[1] \
+            + "\t" + "SG3: " + BM[2] \
+            + "\t" + "SG4: " + BM[3] \
+            + "\t" + "SG5: " + BM[4] \
+            + "\t" + "SG6: " + BM[5] \
+            + "\t" + "SG7: " + BM[6] \
+            + "\t" + "SG8: " + BM[7])
 
         # Write to text file
         file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
-            + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\n")
+            + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\t" \
+            + BM[0] + "\t" + BM[1] + "\t" + BM[2] + "\t" + BM[3] + "\t" \
+            + BM[4] + "\t" + BM[5] + "\t" + BM[6] + "\t" + BM[7] + "\n")
         # add future functionality to detect if no data being received
     except IndexError:
         pass
