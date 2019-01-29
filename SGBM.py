@@ -29,7 +29,7 @@ import datetime
 baudRateList = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000]
 
 def getUserInput():
-    print("*** Read serial data from COM port: SG Calibration ***")
+    print("*** Read serial data from COM port: SG BM ***")
     targetSerialPort = input("Enter COM port (e.g. COM14): ")
     baudRate = int(input("Enter baud rate: ")) # convert input string to integer
 
@@ -50,7 +50,7 @@ def parseData(inputData):
         for i in range(len(sg)):
             sg[i] = stringSplit[(i + 1)]
         bm = np.zeros(8)
-        for i in range(len(sg)):
+        for i in range(len(bm)):
             bm[i] = stringSplit[(i + 9)]
     except IndexError: # if data corruption pass error
         pass
@@ -98,14 +98,14 @@ while True:
             + "\t" + "SG6: " + SG[5] \
             + "\t" + "SG7: " + SG[6] \
             + "\t" + "SG8: " + SG[7] \
-            + "\n" + "SG1: " + BM[0] \
-            + "\t" + "SG2: " + BM[1] \
-            + "\t" + "SG3: " + BM[2] \
-            + "\t" + "SG4: " + BM[3] \
-            + "\t" + "SG5: " + BM[4] \
-            + "\t" + "SG6: " + BM[5] \
-            + "\t" + "SG7: " + BM[6] \
-            + "\t" + "SG8: " + BM[7])
+            + "\n" + "BM1: " + BM[0] \
+            + "\t" + "BM2: " + BM[1] \
+            + "\t" + "BM3: " + BM[2] \
+            + "\t" + "BM4: " + BM[3] \
+            + "\t" + "BM5: " + BM[4] \
+            + "\t" + "BM6: " + BM[5] \
+            + "\t" + "BM7: " + BM[6] \
+            + "\t" + "BM8: " + BM[7])
 
         # Write to text file
         file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
@@ -113,6 +113,8 @@ while True:
             + BM[0] + "\t" + BM[1] + "\t" + BM[2] + "\t" + BM[3] + "\t" \
             + BM[4] + "\t" + BM[5] + "\t" + BM[6] + "\t" + BM[7] + "\n")
         # add future functionality to detect if no data being received
+    except UnboundLocalError:
+        pass
     except IndexError:
         pass
     except UnicodeDecodeError: # check if data can be decoded
