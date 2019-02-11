@@ -17,6 +17,8 @@ import os
 import sys
 import serial
 import time
+import numpy as np
+import datetime
 
 baudRateList = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000]
 
@@ -34,8 +36,23 @@ def getUserInput():
         sys.exit(1) # exit program
     return targetSerialPort, baudRate
 
-# def parseData(inputData):
-#     return None
+def parseData(inputData):
+    try:
+        stringSplit = inputData.split(',') # split input data by char
+        time = stringSplit[0] # first float is time, synced to transmitter
+        sg = np.zeros(8)
+        for i in range(len(sg)):
+            sg[i] = stringSplit[(i + 1)]
+        aoa, beta, bat1, bat2 = 0 # write 0 if no data
+        aoa = stringSplit[8]
+        beta = stringSplit[9]
+        bat1 = stringSplit[10]
+        bat2 = stringSplit[11]
+    except IndexError: # if data corruption pass error
+        pass
+    except ValueError: # if data corruption pass error
+        pass
+    return time, sg, aoa, beta, bat1, bat2
 
 targetSerialPort, baudRate = getUserInput()
 
@@ -51,15 +68,40 @@ except serial.serialutil.SerialException: # serial port inaccessible error
     print("Serial port cannot be found. Check COM port or if it is open in another program.")
     sys.exit(1) # exit program
 
+# Prepare text file to write data to, e.g. 2019_01_22_23_17_59.txt
+currentDT = datetime.datetime.now()
+file = open("FT_" + currentDT.strftime("%Y_%m_%d_%H_%M_%S") + ".txt", "w")
+file.write("Time" + "\t" + "SG1" + "\t" + "SG2" + "\t" + "SG3" + "\t" + "SG4" \
+    + "\t" + "SG5" + "\t" + "SG6" + "\t" + "SG7" + "\t" + "SG8" \
+    + "\t" + "AoA" + "\t" + "Sideslip" + "\t" + "Bat_1" + "\t" + "Bat_2")
+
 while True:
     try:
-        data = serialPort.readline()
-        os.system("cls")
-        print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
-        # None = parseData(str(data,'utf-8').strip('\r\n'))
+        data = serialPort.readline() # read from serial port
+        os.system("cls") # clear previous lines
+        # print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
+        Time, SG, AoA, Sideslip, Bat_1, Bat_2 = parseData(str(data,'utf-8').strip('\r\n'))
 
+        SG = [str(i) for i in SG] # convert array elements to string
+        # Print to user console
+        print("Uptime: " + Time \
+            + "\t" + "SG1: " + SG[0] \
+            + "\t" + "SG2: " + SG[1] \
+            + "\t" + "SG3: " + SG[2] \
+            + "\t" + "SG4: " + SG[3] \
+            + "\t" + "SG5: " + SG[4] \
+            + "\t" + "SG6: " + SG[5] \
+            + "\t" + "SG7: " + SG[6] \
+            + "\t" + "SG8: " + SG[7] \
+            + "\t" + "AoA: " + AoA \
+            + "\t" + "Sideslip: " + Sideslip \
+            + "\t" + "Bat_1: " + Bat_1 \
+            + "\t" + "Bat_2: " + Bat_2)
+        # Write to text file
+        file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
+            + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\t" \
+            + AoA + "\t" + Sideslip + "\t" + Bat_1 + "\t" + Bat_2 + "\n")
         # add future functionality to detect if no data being received
-        # print(data) # start, stop, carriage return, and quotes still attached
     except IndexError:
         pass
     except UnicodeDecodeError: # check if data can be decoded
@@ -69,6 +111,7 @@ while True:
         print("Program stopped.")
         break
 
+file.close()
 # Clean and close serial port for future use
 serialPort.flush()
 serialPort.close()
