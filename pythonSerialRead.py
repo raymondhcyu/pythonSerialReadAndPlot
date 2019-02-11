@@ -38,7 +38,10 @@ def getUserInput():
 
 def parseData(inputData):
     try:
+        warning1, warning2, warning3 = (' ', ' ', ' ')
+        fullVoltage = 25.2;
         stringSplit = inputData.split(',') # split input data by char
+
         time = stringSplit[0] # first float is time, synced to transmitter
         sg = np.zeros(8)
         for i in range(len(sg)):
@@ -48,6 +51,14 @@ def parseData(inputData):
         beta = stringSplit[9]
         bat1 = stringSplit[10]
         bat2 = stringSplit[11]
+
+        # Anomaly checks
+        if (int(bat1) < 18) or (int(bat2) < 18):
+            warning1 = 'BATT WARNING'
+        if int(aoa) > 100:
+            warning2 = 'AOA WARNING'
+        if int(beta) > 200:
+            warning3 = 'SIDESLIP WARNING'
     except IndexError: # if data corruption pass error
         pass
     except ValueError: # if data corruption pass error

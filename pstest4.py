@@ -81,7 +81,6 @@ while True:
         #     + "\t" + "Sideslip: " + Sideslip + "degs"
         #     + "\t" + Warning1 + "\t" + Warning2 + "\t" + Warning3)
 
-        # change individual bats to data array
         # add future functionality to detect if no data being received
         # print(data) # start, stop, carriage return, and quotes still attached
     except IndexError:
