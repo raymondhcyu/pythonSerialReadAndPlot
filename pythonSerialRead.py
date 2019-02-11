@@ -21,6 +21,12 @@ import numpy as np
 import datetime
 
 baudRateList = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000]
+fullVoltage = 25.0
+emptyVoltage = 20.0
+warningVoltagePercentage = ((21.0 - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100
+AoAWarningAngle = 100.0
+sideslipWarningAngle = 200.0
+warning = [None] * 4 # four possible warnings
 
 def getUserInput():
     print("*** Read serial data from COM port ***")
@@ -38,10 +44,9 @@ def getUserInput():
 
 def parseData(inputData):
     try:
-        warning1, warning2, warning3 = (' ', ' ', ' ')
-        fullVoltage = 25.2;
         stringSplit = inputData.split(',') # split input data by char
 
+        # Parsing
         time = stringSplit[0] # first float is time, synced to transmitter
         sg = np.zeros(8)
         for i in range(len(sg)):
@@ -49,21 +54,24 @@ def parseData(inputData):
         aoa, beta, bat1, bat2 = 0 # write 0 if no data
         aoa = stringSplit[8]
         beta = stringSplit[9]
-        bat1 = stringSplit[10]
-        bat2 = stringSplit[11]
+        bat1 = ((stringSplit[10] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
+        bat2 = ((stringSplit[11] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
 
         # Anomaly checks
-        if (int(bat1) < 18) or (int(bat2) < 18):
-            warning1 = 'BATT WARNING'
-        if int(aoa) > 100:
-            warning2 = 'AOA WARNING'
-        if int(beta) > 200:
-            warning3 = 'SIDESLIP WARNING'
+        if (float(bat1) < warningVoltagePercentage) or (float(bat2) < warningVoltagePercentage):
+            warning[0] = 'BATT WARNING'
+        if float(aoa) > AoAWarningAngle:
+            warning[1] = 'AOA WARNING'
+        if float(beta) > sideslipWarningAngle:
+            warning[2] = 'SIDESLIP WARNING'
+        # if engineFailure() == True:
+        #     warning[3] = 'ENGINE WARNING'
+
     except IndexError: # if data corruption pass error
         pass
     except ValueError: # if data corruption pass error
         pass
-    return time, sg, aoa, beta, bat1, bat2
+    return time, sg, aoa, beta, bat1, bat2, warning
 
 targetSerialPort, baudRate = getUserInput()
 
@@ -91,9 +99,11 @@ while True:
         data = serialPort.readline() # read from serial port
         os.system("cls") # clear previous lines
         # print(str(data,'utf-8').strip('\r\n')) # read data and remove carriage returns and newlines
-        Time, SG, AoA, Sideslip, Bat_1, Bat_2 = parseData(str(data,'utf-8').strip('\r\n'))
+        Time, SG, AoA, Sideslip, Bat_1, Bat_2, Warning = parseData(str(data,'utf-8').strip('\r\n'))
 
         SG = [str(i) for i in SG] # convert array elements to string
+        Warning = [str(i) for i in Warning]
+
         # Print to user console
         print("Uptime: " + Time \
             + "\t" + "SG1: " + SG[0] \
@@ -108,6 +118,12 @@ while True:
             + "\t" + "Sideslip: " + Sideslip \
             + "\t" + "Bat_1: " + Bat_1 \
             + "\t" + "Bat_2: " + Bat_2)
+
+        # Print warnings
+        for i in Warning:
+            if Warning[i]:
+                print("\t" + Warning[i])
+
         # Write to text file
         file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
             + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\t" \
