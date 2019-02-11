@@ -27,6 +27,8 @@ warningVoltagePercentage = ((21.0 - emptyVoltage)/(fullVoltage - emptyVoltage)) 
 AoAWarningAngle = 100.0
 sideslipWarningAngle = 200.0
 warning = [None] * 4 # four possible warnings
+oldVoltage = [0.0, 0.0] # check for failure
+newVoltage = [0.0, 0.0] # check for failure
 
 def getUserInput():
     print("*** Read serial data from COM port ***")
@@ -44,6 +46,8 @@ def getUserInput():
 
 def parseData(inputData):
     try:
+        oldVoltage = newVoltage.copy()
+
         stringSplit = inputData.split(',') # split input data by char
 
         # Parsing
@@ -56,6 +60,7 @@ def parseData(inputData):
         beta = stringSplit[9]
         bat1 = ((stringSplit[10] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
         bat2 = ((stringSplit[11] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
+        newVoltage = [bat1, bat2]
 
         # Anomaly checks
         if (float(bat1) < warningVoltagePercentage) or (float(bat2) < warningVoltagePercentage):
@@ -64,8 +69,8 @@ def parseData(inputData):
             warning[1] = 'AOA WARNING'
         if float(beta) > sideslipWarningAngle:
             warning[2] = 'SIDESLIP WARNING'
-        # if engineFailure() == True:
-        #     warning[3] = 'ENGINE WARNING'
+        if oldVoltage[0] != 0 and (newVoltage[0] > (oldVoltage[0] * 1.01) or newVoltage[1] > (oldVoltage[1] * 1.01)):
+            warning[3] = 'ENGINE WARNING'
 
     except IndexError: # if data corruption pass error
         pass
@@ -128,7 +133,7 @@ while True:
         file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
             + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\t" \
             + AoA + "\t" + Sideslip + "\t" + Bat_1 + "\t" + Bat_2 + "\n")
-        # add future functionality to detect if no data being received
+
     except IndexError:
         pass
     except UnicodeDecodeError: # check if data can be decoded
