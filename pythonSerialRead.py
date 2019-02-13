@@ -23,12 +23,13 @@ import datetime
 baudRateList = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000]
 fullVoltage = 25.0
 emptyVoltage = 20.0
+aoa = beta = bat1 = bat2 = [0.0]
+warning = [None] * 4 # four possible warnings
 warningVoltagePercentage = ((21.0 - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100
 AoAWarningAngle = 100.0
 sideslipWarningAngle = 200.0
-warning = [None] * 4 # four possible warnings
-oldVoltage = [0.0, 0.0] # check for failure
-newVoltage = [0.0, 0.0] # check for failure
+oldVoltage = [0.0] # check for failure
+newVoltage = [0.0] # check for failure
 
 def getUserInput():
     print("*** Read serial data from COM port ***")
@@ -46,8 +47,6 @@ def getUserInput():
 
 def parseData(inputData):
     try:
-        oldVoltage = newVoltage.copy()
-
         stringSplit = inputData.split(',') # split input data by char
 
         # Parsing
@@ -55,21 +54,22 @@ def parseData(inputData):
         sg = np.zeros(8)
         for i in range(len(sg)):
             sg[i] = stringSplit[(i + 1)]
-        aoa, beta, bat1, bat2 = 0 # write 0 if no data
-        aoa = stringSplit[8]
-        beta = stringSplit[9]
-        bat1 = ((stringSplit[10] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
-        bat2 = ((stringSplit[11] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
-        newVoltage = [bat1, bat2]
+        aoa[0] = stringSplit[9]
+        beta[0] = stringSplit[10]
+        bat1[0] = ((stringSplit[11] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
+        bat2[0] = ((stringSplit[12] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
+        newVoltage = [bat1]
+
+        oldVoltage = newVoltage.copy()
 
         # Anomaly checks
-        if (float(bat1) < warningVoltagePercentage) or (float(bat2) < warningVoltagePercentage):
+        if (float(bat1[0]) < warningVoltagePercentage) or (float(bat2[0]) < warningVoltagePercentage):
             warning[0] = 'BATT WARNING'
-        if float(aoa) > AoAWarningAngle:
+        if float(aoa[0]) > AoAWarningAngle:
             warning[1] = 'AOA WARNING'
-        if float(beta) > sideslipWarningAngle:
+        if float(beta[0]) > sideslipWarningAngle:
             warning[2] = 'SIDESLIP WARNING'
-        if oldVoltage[0] != 0 and (newVoltage[0] > (oldVoltage[0] * 1.01) or newVoltage[1] > (oldVoltage[1] * 1.01)):
+        if oldVoltage[0] != 0 and (newVoltage[0] > (oldVoltage[0] * 1.01)):
             warning[3] = 'ENGINE WARNING'
 
     except IndexError: # if data corruption pass error
@@ -97,7 +97,7 @@ currentDT = datetime.datetime.now()
 file = open("FT_" + currentDT.strftime("%Y_%m_%d_%H_%M_%S") + ".txt", "w")
 file.write("Time" + "\t" + "SG1" + "\t" + "SG2" + "\t" + "SG3" + "\t" + "SG4" \
     + "\t" + "SG5" + "\t" + "SG6" + "\t" + "SG7" + "\t" + "SG8" \
-    + "\t" + "AoA" + "\t" + "Sideslip" + "\t" + "Bat_1" + "\t" + "Bat_2")
+    + "\t" + "AoA" + "\t" + "Beta" + "\t" + "Bat_1" + "\t" + "Bat_2")
 
 while True:
     try:
@@ -108,6 +108,10 @@ while True:
 
         SG = [str(i) for i in SG] # convert array elements to string
         Warning = [str(i) for i in Warning]
+        AoA = [str(i) for i in AoA]
+        Sideslip = [str(i) for i in Sideslip]
+        Bat_1 = [str(i) for i in Bat_1]
+        Bat_2 = [str(i) for i in Bat_2]
 
         # Print to user console
         print("Uptime: " + Time \
@@ -119,20 +123,25 @@ while True:
             + "\t" + "SG6: " + SG[5] \
             + "\t" + "SG7: " + SG[6] \
             + "\t" + "SG8: " + SG[7] \
-            + "\t" + "AoA: " + AoA \
-            + "\t" + "Sideslip: " + Sideslip \
-            + "\t" + "Bat_1: " + Bat_1 \
-            + "\t" + "Bat_2: " + Bat_2)
+            + "\t" + "AoA: " + AoA[0] \
+            + "\t" + "Sideslip: " + Sideslip[0] \
+            + "\t" + "Bat_1: " + Bat_1[0] \
+            + "\t" + "Bat_2: " + Bat_2[0])
 
-        # Print warnings
-        for i in Warning:
-            if Warning[i]:
-                print("\t" + Warning[i])
+        # Print warnings; auto new line
+        if Warning[0]:
+            print(Warning[0])
+        if Warning[1]:
+            print(Warning[1])
+        if Warning[2]:
+            print(Warning[2])
+        # if Warning[3]:
+        #     print(Warning[3])
 
-        # Write to text file
+        # Write to text file; auto new line
         file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
             + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\t" \
-            + AoA + "\t" + Sideslip + "\t" + Bat_1 + "\t" + Bat_2 + "\n")
+            + AoA[0] + "\t" + Sideslip[0] + "\t" + Bat_1[0] + "\t" + Bat_2[0])
 
     except IndexError:
         pass

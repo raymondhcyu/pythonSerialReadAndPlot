@@ -44,7 +44,7 @@ def getUserInput():
 
 def parseData(inputData):
     try:
-        stringSplit = inputData.split(' ') # split input data by char
+        stringSplit = inputData.split(',') # split input data by char
         time = stringSplit[0] # first float is time, synced to transmitter
         sg = np.zeros(8)
         for i in range(len(sg)):
@@ -78,7 +78,7 @@ file.write("Time" + "\t" + "SG1" + "\t" + "SG2" + "\t" + "SG3" + "\t" + "SG4" \
 while True:
     try:
         data = serialPort.readline() # read from serial port
-        os.system("cls") # clear previous lines
+        # os.system("cls") # clear previous lines
         # print(str(data,'utf-8').strip('\r\n')) # Testpoint: read data and remove carriage returns and newlines
         Time, SG = parseData(str(data,'utf-8').strip('\r\n'))
         SG = [str(i) for i in SG]
