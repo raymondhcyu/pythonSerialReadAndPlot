@@ -56,8 +56,8 @@ def parseData(inputData):
             sg[i] = stringSplit[(i + 1)]
         aoa[0] = stringSplit[9]
         beta[0] = stringSplit[10]
-        bat1[0] = ((stringSplit[11] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
-        bat2[0] = ((stringSplit[12] - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
+        bat1[0] = ((float(stringSplit[11]) - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
+        bat2[0] = ((float(stringSplit[12]) - emptyVoltage)/(fullVoltage - emptyVoltage)) * 100 # scale and turn to percentage
         newVoltage = [bat1]
 
         oldVoltage = newVoltage.copy()
