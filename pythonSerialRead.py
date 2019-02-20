@@ -69,8 +69,8 @@ def parseData(inputData):
             warning[1] = 'AOA WARNING'
         if float(beta[0]) > sideslipWarningAngle:
             warning[2] = 'SIDESLIP WARNING'
-        if oldVoltage[0] != 0 and (newVoltage[0] > (oldVoltage[0] * 1.01)):
-            warning[3] = 'ENGINE WARNING'
+        # if oldVoltage[0] != 0 and (newVoltage[0] > (oldVoltage[0] * 1.01)):
+        #     warning[3] = 'ENGINE WARNING'
 
     except IndexError: # if data corruption pass error
         pass
