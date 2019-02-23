@@ -63,3 +63,6 @@ for i in range(len(SG)):
 
 # for i in range(8):
 #     print(i, i + 9 + (i % 2))
+
+string = "-399.999999"
+print(string[:7])

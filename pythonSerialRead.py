@@ -71,6 +71,7 @@ def parseData(inputData):
             warning[2] = 'SIDESLIP WARNING'
         # if oldVoltage[0] != 0 and (newVoltage[0] > (oldVoltage[0] * 1.01)):
         #     warning[3] = 'ENGINE WARNING'
+        # NEED TIME CONDITION
 
     except IndexError: # if data corruption pass error
         pass
@@ -123,10 +124,10 @@ while True:
             + "\t" + "SG6: " + SG[5] \
             + "\t" + "SG7: " + SG[6] \
             + "\t" + "SG8: " + SG[7] \
-            + "\t" + "AoA: " + AoA[0] \
-            + "\t" + "Sideslip: " + Sideslip[0] \
-            + "\t" + "Bat_1: " + Bat_1[0] \
-            + "\t" + "Bat_2: " + Bat_2[0])
+            + "\t" + "AoA: " + AoA[0][:7] \
+            + "\t" + "Sideslip: " + Sideslip[0][:7] \
+            + "\t" + "Bat_1: " + Bat_1[0][:7] \
+            + "\t" + "Bat_2: " + Bat_2[0][:7])
 
         # Print warnings; auto new line
         if Warning[0]:
@@ -141,7 +142,7 @@ while True:
         # Write to text file; auto new line
         file.write("\n" + Time + "\t" + SG[0] + "\t" + SG[1] + "\t" + SG[2] + "\t" + SG[3] + "\t" \
             + SG[4] + "\t" + SG[5] + "\t" + SG[6] + "\t" + SG[7] + "\t" \
-            + AoA[0] + "\t" + Sideslip[0] + "\t" + Bat_1[0] + "\t" + Bat_2[0])
+            + AoA[0][:7] + "\t" + Sideslip[0][:7] + "\t" + Bat_1[0][:7] + "\t" + Bat_2[0][:7])
 
     except IndexError:
         pass
